@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:compression="http://www.mulesoft.org/schema/mule/compression"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls" xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/mule/compression/current/mule-compression.xsd">
+	<http:request-config name="HTTP_Request_configuration4" doc:name="HTTP Request configuration" doc:id="5a34719a-478e-49aa-b3fc-0487458b5e85" basePath="/api" enableCookies="false" >
+		<http:request-connection host="localhost" port="8081" usePersistentConnections="false">
+		</http:request-connection>
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="85c35aef-2305-4818-8d6d-78b1f1b4a93b" file="conf.properties" />
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="2c50a562-09f8-4673-a4b3-3a406dc40c2d" />
+	
+	<email:smtp-config name="Email_SMTP1" doc:name="Email SMTP" doc:id="e09c1b6f-2e05-4c19-b8a8-fd6c77348963" >
+		<email:smtp-connection host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="${smtp.password}" connectionTimeout="30" readTimeout="30" writeTimeout="30"/>
+	</email:smtp-config>
+	<flow name="RetrieveAllData_HTTP_Flow" doc:id="5da8ce40-c463-4acd-b2ae-618dfec8c33a">
+		<http:listener doc:name="Listener" doc:id="61cfdd42-3498-40c7-9fdf-218b1d8fe7f5" config-ref="cpu-utilisation-report-httpListenerConfig" path="/retrieveAll" />
+		<flow-ref doc:name="Flow Reference" doc:id="a93d78f8-f110-4c88-8cd6-ec1fd6591d42" name="retrieveAll" />
+	</flow>
+	<flow name="Test_Scheduler" doc:id="c76dbd69-9b09-469e-9146-be0d4826778d" >
+		<http:listener doc:name="Listener" doc:id="8ecea91f-4a2e-4a0c-81cd-754a76bc131c" config-ref="cpu-utilisation-report-httpListenerConfig" path="/collectMetrics"/>
+		<flow-ref doc:name="Flow Reference" doc:id="25b47cd2-429f-4056-ac8f-cdf2a6ccf6f5" name="schedulerSub_Flow_call_API_and_store_data"/>
+	</flow>
+	<flow name="schedulerFlowGetReport" doc:id="4e7b7192-56c9-4bb6-9edc-ac96908721c4">
+		<http:listener doc:name="Listener" doc:id="a8001346-5ab0-4052-92f7-8a28dd1f83f7" config-ref="cpu-utilisation-report-httpListenerConfig" path="getReport" />
+		<flow-ref doc:name="Flow Reference" doc:id="fd154749-9e93-4486-a069-493e0a4919a6" name="getReportSubflow" />
+	</flow>
+	<flow name="ClearAllData" doc:id="402bc726-f564-430c-87d4-d60f8ec1d61c">
+		<http:listener doc:name="Listener" doc:id="afd86f7c-1491-4a43-9f69-e7b6f03d34f0" config-ref="cpu-utilisation-report-httpListenerConfig" path="/clear" />
+		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626" objectStore="Object_store" />
+	</flow>
+	<flow name="schedulerCPU_metric_Collection_Flow" doc:id="159ac1e1-69a3-4943-a6c3-90fa438b5a2b" initialState="started">
+		<scheduler doc:name="Scheduler_collect_CPU" doc:id="5df677d3-b248-4dc9-9219-470c8c9f7d1a" >
+			<scheduling-strategy >
+				<fixed-frequency frequency="60" timeUnit="MINUTES"/>
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="Flow Reference" doc:id="1eb5914a-00e4-49f8-9b26-33e7958303cf" name="schedulerSub_Flow_call_API_and_store_data"/>
+	</flow>
+	<flow name="scheduler_Send_Email" doc:id="a0c329c7-d915-42de-9730-066f9b13e825">
+		<scheduler doc:name="Scheduler_Send_Email" doc:id="0a9fbf23-3d8f-481d-a27c-304a1fa2c4fb">
+			<scheduling-strategy>
+				<fixed-frequency frequency="${reportingFrequencyInDays}" timeUnit="DAYS" />
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="Flow Reference" doc:id="f167e1a2-ea63-4842-9f81-d8e97caf92dd" name="getReportSubflow" target="sheet_summary" />
+		<flow-ref doc:name="Flow Reference" doc:id="e2847005-b492-4e4e-8ab4-cfcc4c1cb883" name="retrieveAll" target="sheet_detail" />
+		<ee:transform doc:name="Transform Message" doc:id="78ada9cc-26a2-4dbb-a3a5-b7f5579c5a88">
+			<ee:message>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="Excel_Summary_Content"><![CDATA[%dw 2.0
+output application/xlsx header=true
+---
+{
+	sheet_sumary: vars.sheet_summary
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<compression:compress doc:name="Compress" doc:id="2c4ea190-3fff-4705-8938-9ae18aa0af21" target="sheetDetailZipped">
+			<compression:content ><![CDATA[#[vars.sheet_detail]]]></compression:content>
+			<compression:compressor >
+				<compression:zip-compressor />
+			</compression:compressor>
+		</compression:compress>
+		<email:send doc:name="Send" doc:id="96656c75-920e-44c7-8deb-f67b1b4a6f1f" config-ref="Email_SMTP1" fromAddress="${smtp.emailFrom}" subject="CPU Report ${customer.name}">
+			<email:to-addresses>
+				<email:to-address value="${smtp.emailTo}" />
+			</email:to-addresses>
+			<email:body>
+				<email:content><![CDATA[This is the report]]></email:content>
+			</email:body>
+			
+			
+			<email:attachments><![CDATA[#[{
+          	"report.xlsx" : vars.Excel_Summary_Content,
+          	"detail_data.zip" : vars.sheetDetailZipped
+}]]]></email:attachments>
+			
+		</email:send>
+		<logger level="INFO" doc:name="Logger" doc:id="f86eb3d3-a638-4d15-89e6-9f0c6e5d0cb9" message="Email sent!" />
+	</flow>
+	<sub-flow name="schedulerSub_Flow_call_API_and_store_data" doc:id="6ae44b56-608f-4ad5-99d0-b27e078b3b00" >
+		<http:request method="GET" doc:name="Request" doc:id="a9c297b9-2fe1-4404-8365-1b42d2e163ee" config-ref="HTTP_Request_configuration4" path="/${Anypoint.masterOrg}/cpu" responseTimeout="600000">
+			<http:query-params><![CDATA[#[output application/json
+//fun format(d: DateTime) = d as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} 
+---
+{
+	"interval" : 3600000
+}]]]></http:query-params>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="71c0a956-32e5-46c4-aac3-8e8136e08797">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"averageCPUUtilisationSandbox" : if (payload.sandbox.r.item != null) (avg(payload.sandbox.r.item.averageCPUUtilisation filter payload.sandbox.r.item != null default[])) else (0),
+	"averageCPUUtilisationProduction" : if (payload.production.r.item != null) (avg(payload.production.r.item.averageCPUUtilisation filter payload.production.r.item != null default[])) else (0),
+	"averageCPUUtilisationDesign" : if (payload.design.r.item != null) (avg(payload.design.r.item.averageCPUUtilisation filter payload.design.r.item != null default[])) else (0),
+
+	"endDate" : payload.sandbox.r.item.endDate[0],
+
+ 	"payload": payload
+	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="epoch_enddate" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.sandbox.r.item.endDate[0] as DateTime as Number]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]" objectStore="Object_store">
+		</os:store>
+		<logger level="INFO" doc:name="Logger" doc:id="27001ac7-1da5-40bd-b901-9ddc1c3472e0" message="Data stored in Object Store" />
+	</sub-flow>
+	<sub-flow name="retrieveAll" doc:id="5933851f-9cbf-41cc-9ace-7f71c464c95f" >
+		<os:retrieve-all doc:name="Retrieve all" doc:id="5e44cde5-a0e1-4b5c-b2c6-1b3a133a88c1" objectStore="Object_store" />
+		<ee:transform doc:name="Transform Message" doc:id="ab15a28b-ad84-4352-9ac3-6d6bd8051374">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="getReportSubflow" doc:id="b60583ff-cadb-4c37-b4f0-68244e59933b" >
+		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02" objectStore="Object_store" />
+		<ee:transform doc:name="Transform Message" doc:id="e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload pluck (value,key)  -> {
+	epoch: key,
+	Date: key as Number as DateTime as String  {format: "yyyy-MM-dd'T'HH:mm" } ,
+    averageCPUUtilisationSandbox: value.averageCPUUtilisationSandbox as String {format: "0.00", roundMode:"DOWN"},
+    averageCPUUtilisationProduction: value.averageCPUUtilisationProduction as String {format: "0.00", roundMode:"DOWN"},
+    averageCPUUtilisationDesign: value.averageCPUUtilisationDesign as String {format: "0.00", roundMode:"DOWN"} 
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message" doc:id="6dc66aa3-b9b6-469c-967d-f79aa28093ef">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload orderBy(-$.epoch)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>

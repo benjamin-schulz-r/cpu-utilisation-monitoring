@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>35b550e1-a2ef-41ad-aeef-4b837a72ba43</groupId>
+  <artifactId>cpu-utilisation-report</artifactId>
+  <version>1.0.0</version>
+  <name>CPU Utilisation report</name>
+  <properties>
+    <classifier>raml</classifier>
+    <main>cpu-utilisation-report.raml</main>
+    <originalFormatVersion>1.0</originalFormatVersion>
+    <apiVersion>1.0.0</apiVersion>
+    <projectId>590de3a9-ec8d-4ac5-bd31-3bcef6a374e7</projectId>
+    <branchId>master</branchId>
+    <commitId>849ae9a82ea74fb97b2214d1328c783255569fb0</commitId>
+    <keywords>_visual_designer</keywords>
+    <type>rest-api</type>
+    <mainFile>cpu-utilisation-report.raml</mainFile>
+  </properties>
+  <repositories>
+    <repository>
+      <id>anypoint-exchange</id>
+      <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+    </repository>
+  </repositories>
+</project>

@@ -1,0 +1,112 @@
+[
+  {
+    "application": "xapi-ttg-esl",
+    "environment": "Sandbox",
+    "workerType": 2,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": -1,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "sapi-shoppingcard",
+    "environment": "Sandbox",
+    "workerType": 2,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": -1,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "x-api-ttg-product",
+    "environment": "Sandbox",
+    "workerType": 1,
+    "workerAmount": 2,
+    "status": "STARTED",
+    "averageCPUUtilisation": 1.0,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "s-api-ttg-customer",
+    "environment": "Sandbox",
+    "workerType": 1,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": 2.0,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "xx-apimobile-rjdx",
+    "environment": "Design",
+    "workerType": 0.2,
+    "workerAmount": 1,
+    "status": "UNDEPLOYED",
+    "averageCPUUtilisation": null,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "x-api-ttg-mobile",
+    "environment": "Sandbox",
+    "workerType": 0.1,
+    "workerAmount": 2,
+    "status": "STARTED",
+    "averageCPUUtilisation": -1,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "ux-ah-demo-jexd",
+    "environment": "Sandbox",
+    "workerType": 0.2,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": 1.0,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "xapi-trash-can",
+    "environment": "Sandbox",
+    "workerType": 0.2,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": -1,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "ah-ui-demo",
+    "environment": "Demo",
+    "workerType": 0.1,
+    "workerAmount": 1,
+    "status": "UNDEPLOYED",
+    "averageCPUUtilisation": null,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "test-ah",
+    "environment": "Sandbox",
+    "workerType": 0.1,
+    "workerAmount": 1,
+    "status": "UNDEPLOYED",
+    "averageCPUUtilisation": null,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  },
+  {
+    "application": "ah-ttg-ui",
+    "environment": "Sandbox",
+    "workerType": 0.1,
+    "workerAmount": 1,
+    "status": "STARTED",
+    "averageCPUUtilisation": -1,
+    "endDate": "2021-01-18T16:04:54.965Z",
+    "startDate": "2021-01-18T15:04:54.964Z"
+  }
+]
