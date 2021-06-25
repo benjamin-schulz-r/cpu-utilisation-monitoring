@@ -194,7 +194,6 @@ type main_api_outputpayload = Array<{|  item: {|    application: String,     env
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
-  <types:enrichment select="#42b38a3e-65bd-4944-973c-9fc8ccbeab4a"/>
   <types:enrichment select="#004d4251-400a-441c-a8c2-2273272e7209">
     <types:processor-declaration>
       <types:output-event>
