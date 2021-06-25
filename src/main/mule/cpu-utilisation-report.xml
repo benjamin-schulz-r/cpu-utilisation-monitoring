@@ -7,7 +7,7 @@ http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mu
     <http:listener-config name="cpu-utilisation-report-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="cpu-utilisation-report-config" api="resource::35b550e1-a2ef-41ad-aeef-4b837a72ba43:cpu-utilisation-report:1.0.0:raml:zip:cpu-utilisation-report.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" disableValidations="true"/>
+    <apikit:config name="cpu-utilisation-report-config" api="resource::fd1d505c-1f68-4f15-aabe-6a06c6532844:cpu-usage-api:1.0.0:raml:zip:cpu-utilisation-report.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" disableValidations="true"/>
     <http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="68e6b0b0-85c5-44b0-9264-60a6204abc81" basePath="/accounts/api/organizations/" >
 		<http:request-connection protocol="HTTPS" host="${Anypoint.URL}" port="443" />
 	</http:request-config>
