@@ -183,8 +183,25 @@ output application/json
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
 ---
-payload.subOrganizationIds]]></ee:set-payload>
+payload.subOrganizationIds as Array<String>]]></ee:set-payload>
 			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="totalVCoresProd" ><![CDATA[%dw 2.0
+output application/java
+---
+if (payload.isMaster) payload.entitlements.vCoresProduction.assigned as Number
+else vars.totalVCoresProd]]></ee:set-variable>
+				<ee:set-variable variableName="totalVCoresSandbox" ><![CDATA[%dw 2.0
+output application/java
+---
+if (payload.isMaster) payload.entitlements.vCoresSandbox.assigned as Number
+else vars.totalVCoresSandbox]]></ee:set-variable>
+				<ee:set-variable variableName="totalVCoresDesign" ><![CDATA[%dw 2.0
+output application/java
+---
+if (payload.isMaster) payload.entitlements.vCoresDesign.assigned as Number
+else vars.totalVCoresDesign]]></ee:set-variable>
+			</ee:variables>
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="ab1d1574-02af-4cfb-a597-36f4a686bbd6" >
 			<when expression="#[sizeOf(payload) == 0]">
@@ -219,27 +236,27 @@ payload]]></ee:set-variable>
 		</choice>
 	</flow>
 	<flow name="get:\(X-ANYPNT-ORG-ID)\cpu:cpu-utilisation-report-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="Set queryParams as variables">
             <ee:variables>
                 <ee:set-variable variableName="X-ANYPNT-ORG-ID"><![CDATA[attributes.uriParams.'X-ANYPNT-ORG-ID']]></ee:set-variable>
-				<ee:set-variable variableName="startDate" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="startDate"><![CDATA[%dw 2.0
 output application/json
 ---
 //attributes.queryParams["startDate"]
 if (attributes.queryParams["startDate"] == null) (now() - |PT1H|) else  (attributes.queryParams["startDate"])]]></ee:set-variable>
-				<ee:set-variable variableName="endDate" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="endDate"><![CDATA[%dw 2.0
 output application/json
 ---
 //attributes.queryParams["endDate"]
 if (attributes.queryParams["endDate"] == null) (now()) else  (attributes.queryParams["endDate"])]]></ee:set-variable>
-				<ee:set-variable variableName="interval" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="interval"><![CDATA[%dw 2.0
 output application/java
 ---
 attributes.queryParams["interval"]]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <http:request method="POST" doc:name="Request LOGIN" doc:id="50469a12-b7cb-4022-bb45-3641ddce81e8" config-ref="HTTP_Request_configuration1" path="/" outputMimeType="application/json" responseTimeout="600000">
-			<http:body ><![CDATA[#[%dw 2.0
+			<http:body><![CDATA[#[%dw 2.0
 import * from dw::core::Arrays
 output application/x-www-form-urlencoded
 var client_id = Mule::p('Anypoint.ConnectedApp.client_id')
@@ -250,7 +267,7 @@ var client_secret = Mule::p('Anypoint.ConnectedApp.client_secret')
    "client_secret" : client_secret,
    "grant_type" : "client_credentials"
 }]]]></http:body>
-			<http:headers ><![CDATA[#[output application/java
+			<http:headers><![CDATA[#[output application/java
 ---
 {
 	"Accept" : "application/json",
@@ -258,54 +275,54 @@ var client_secret = Mule::p('Anypoint.ConnectedApp.client_secret')
 }]]]></http:headers>
 		</http:request>
 		
-		<ee:transform doc:name="Transform Message" doc:id="42b38a3e-65bd-4944-973c-9fc8ccbeab4a" >
-			<ee:message >
+		<ee:transform doc:name="Transform Message" doc:id="42b38a3e-65bd-4944-973c-9fc8ccbeab4a">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="access_token" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="access_token"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.access_token
 ]]></ee:set-variable>
-				<ee:set-variable variableName="XSRF-TOKEN" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="XSRF-TOKEN"><![CDATA[%dw 2.0
 output application/java
 ---
 ((attributes.headers[7] splitBy(/[;\/]/))[0] splitBy(/[=\/]/))[1]
 ]]></ee:set-variable>
-				<ee:set-variable variableName="final_list" ><![CDATA[%dw 2.0
+				<ee:set-variable variableName="final_list"><![CDATA[%dw 2.0
 output application/java
 ---
 null]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="0590155e-6d61-4ed4-bfa5-23d75f6fbd79" message="#[vars]"/>
-		<ee:transform doc:name="Transform Message" doc:id="d4221825-ae44-477d-aca8-01abc387f04f" >
-			<ee:message >
+		<logger level="INFO" doc:name="Logger" doc:id="0590155e-6d61-4ed4-bfa5-23d75f6fbd79" message="#[vars]" />
+		<ee:transform doc:name="Transform Message" doc:id="d4221825-ae44-477d-aca8-01abc387f04f">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="final_list_of_business_groups" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="final_list_of_business_groups"><![CDATA[%dw 2.0
 output application/java
 ---
 vars."X-ANYPNT-ORG-ID"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups"/>
-		<ee:transform doc:name="Transform Message" doc:id="4f873875-f041-48d0-b7f3-cdc1d4d9df19" >
-			<ee:message >
+		<flow-ref doc:name="Flow Reference Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups" />
+		<ee:transform doc:name="Transform Message" doc:id="4f873875-f041-48d0-b7f3-cdc1d4d9df19">
+			<ee:message>
 			</ee:message>
-			<ee:variables >
-				<ee:set-variable variableName="final_list_of_business_groups" ><![CDATA[%dw 2.0
+			<ee:variables>
+				<ee:set-variable variableName="final_list_of_business_groups"><![CDATA[%dw 2.0
 output application/java
 ---
 flatten(vars.final_list_of_business_groups)]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<foreach doc:name="For Each business group" doc:id="7807b418-1af3-4162-8613-320a60dd4a3c" collection="#[vars.final_list_of_business_groups]">
-			<ee:transform doc:name="Transform Message" doc:id="acc18887-8c34-42e6-87fd-bfd1a29064ee" >
-				<ee:message >
+			<ee:transform doc:name="Transform Message" doc:id="acc18887-8c34-42e6-87fd-bfd1a29064ee">
+				<ee:message>
 				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="X-ANYPNT-ORG-ID" ><![CDATA[%dw 2.0
+				<ee:variables>
+					<ee:set-variable variableName="X-ANYPNT-ORG-ID"><![CDATA[%dw 2.0
 output application/java
 ---
 payload]]></ee:set-variable>
@@ -318,15 +335,15 @@ payload]]></ee:set-variable>
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
 		</http:request>
-			<ee:transform doc:name="Transform Message" doc:id="9e02e436-4c0a-41f3-bff9-3e94a76df5b9" >
-				<ee:message >
+			<ee:transform doc:name="Transform Message" doc:id="9e02e436-4c0a-41f3-bff9-3e94a76df5b9">
+				<ee:message>
 				</ee:message>
-				<ee:variables >
-					<ee:set-variable variableName="environments" ><![CDATA[%dw 2.0
+				<ee:variables>
+					<ee:set-variable variableName="environments"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.environments]]></ee:set-variable>
-					<ee:set-variable variableName="businessGroup" ><![CDATA[%dw 2.0
+					<ee:set-variable variableName="businessGroup"><![CDATA[%dw 2.0
 output application/java
 ---
 payload.name]]></ee:set-variable>
@@ -402,7 +419,7 @@ output application/java
 payload.status]]></ee:set-variable>
 					</ee:variables>
 				</ee:transform>
-				<flow-ref doc:name="Flow Reference" doc:id="bd0f9ede-093e-4d69-b398-b4442cab7ee6" name="cpu-utilisation-reportFlow-callStats" />
+				<flow-ref doc:name="Flow Reference callAppCpuStats" doc:id="bd0f9ede-093e-4d69-b398-b4442cab7ee6" name="cpu-utilisation-reportFlow-callStats" />
 				<logger level="INFO" doc:name="Logger" doc:id="e15a3720-de9c-4c0c-a701-ef92d48247bc" message="#[vars.workerStats]" />
 				<ee:transform doc:name="Transform Message" doc:id="f36c73bb-76b4-472f-ae95-5d2ef33bc598">
 					<ee:message>
@@ -535,9 +552,9 @@ var design_cores_normal_contract = Mule::p('customer.design_cores_normal_contrac
 //this splits the array into left side and right side. The left side has the application using the normal contract, the right side has the microservices contract. 
 //The total number of cores in the normal contract is specified below for each type of environment.
 {
-	production: (payload.production default []) splitWhere ($.Total > prod_cores_normal_contract),
-	design: (payload.design default []) splitWhere ($.Total > design_cores_normal_contract),
-	sandbox: (payload.sandbox default []) splitWhere ($.Total > sanbox_cores_normal_contract)
+	production: (payload.production default []) splitWhere ($.Total > prod_cores_normal_contract) ++ {totalVCoresProduction: vars.totalVCoresProd},
+	design: (payload.design default []) splitWhere ($.Total > design_cores_normal_contract)  ++ {totalVCoresDesign: vars.totalVCoresDesign},
+	sandbox: (payload.sandbox default []) splitWhere ($.Total > sanbox_cores_normal_contract)  ++ {totalVCoresSandBox: vars.totalVCoresSandbox}
 }
 ]]></ee:set-payload>
 			</ee:message>

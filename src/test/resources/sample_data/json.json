@@ -1,0 +1,162 @@
+{
+  "production": {
+    "l": [
+      
+    ],
+    "r": [
+      {
+        "item": {
+          "application": "cpu-report",
+          "environment": "Production",
+          "environmentType": "production",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.1,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 0.1
+      }
+    ],
+    "totalVCoresProduction": 4
+  },
+  "design": {
+    "l": [
+      
+    ],
+    "r": [
+      
+    ],
+    "totalVCoresDesign": 28
+  },
+  "sandbox": {
+    "l": [
+      
+    ],
+    "r": [
+      {
+        "item": {
+          "application": "ah-ttg-ui",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.1,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 0.1
+      },
+      {
+        "item": {
+          "application": "xapi-ttg-esl",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 2,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 2.1
+      },
+      {
+        "item": {
+          "application": "sapi-shoppingcard",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 2,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 4.1
+      },
+      {
+        "item": {
+          "application": "s-api-ttg-customer",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 1,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 5.1
+      },
+      {
+        "item": {
+          "application": "x-api-ttg-mobile",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.1,
+          "workerAmount": 2,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 5.3
+      },
+      {
+        "item": {
+          "application": "ux-ah-demo-jexd",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.2,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 5.5
+      },
+      {
+        "item": {
+          "application": "xapi-trash-can",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.2,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 5.7
+      },
+      {
+        "item": {
+          "application": "x-api-ttg-product",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 1,
+          "workerAmount": 2,
+          "status": "STARTED",
+          "averageCPUUtilisation": 0,
+          "endDate": "2021-01-16T13:09:32.406Z",
+          "startDate": "2021-01-16T13:09:25.185Z"
+        },
+        "Total": 7.7
+      }
+    ],
+    "totalVCoresSandBox": 28
+  }
+}

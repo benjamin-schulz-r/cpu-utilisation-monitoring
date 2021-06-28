@@ -166,6 +166,29 @@ type main_api_outputpayload = Array<{|  item: {|    application: String,     env
 
 ]]></types:shape>
     </types:type>
+    <types:type name="cpu_output_payload" format="json">
+      <types:shape format="weave" example="examples/response7.json"><![CDATA[%dw 2.0
+
+type cpu_output_payload = {|
+  production: {|
+    l: Array<Any>, 
+    r: Array<{|      item: {|        application: String,         environment: String,         environmentType: String,         businessGroup: String,         workerType: Number {"typeId": "double"},         workerAmount: Number {"typeId": "int"},         status: String,         averageCPUUtilisation: Number {"typeId": "int"},         endDate: String,         startDate: String      |},       Total: Number {"typeId": "double"}    |}>, 
+    totalVCoreProduction: Number {"typeId": "int"}
+  |}, 
+  design: {|
+    l: Array<Any>, 
+    r: Array<Any>, 
+    totalVCoresDesign: Number {"typeId": "int"}
+  |}, 
+  sandbox: {|
+    l: Array<Any>, 
+    r: Array<{|      item: {|        application: String,         environment: String,         environmentType: String,         businessGroup: String,         workerType: Number {"typeId": "double"},         workerAmount: Number {"typeId": "int"},         status: String,         averageCPUUtilisation: Number {"typeId": "int"},         endDate: String,         startDate: String      |},       Total: Number {"typeId": "double"}    |}>, 
+    totalVCoresSandBox: Number {"typeId": "int"}
+  |}
+|} {"example": "{\\\"production\\\":{\\\"l\\\":[],\\\"r\\\":[{\\\"item\\\":{\\\"application\\\":\\\"cpu-report\\\",\\\"environment\\\":\\\"Production\\\",\\\"environmentType\\\":\\\"production\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":0.1,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":0.1}],\\\"totalVCoreProduction\\\":4},\\\"design\\\":{\\\"l\\\":[],\\\"r\\\":[],\\\"totalVCoresDesign\\\":28},\\\"sandbox\\\":{\\\"l\\\":[],\\\"r\\\":[{\\\"item\\\":{\\\"application\\\":\\\"ah-ttg-ui\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":0.1,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":0.1},{\\\"item\\\":{\\\"application\\\":\\\"xapi-ttg-esl\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":2,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":2.1},{\\\"item\\\":{\\\"application\\\":\\\"sapi-shoppingcard\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":2,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":4.1},{\\\"item\\\":{\\\"application\\\":\\\"s-api-ttg-customer\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":1,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":5.1},{\\\"item\\\":{\\\"application\\\":\\\"x-api-ttg-mobile\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":0.1,\\\"workerAmount\\\":2,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":5.3},{\\\"item\\\":{\\\"application\\\":\\\"ux-ah-demo-jexd\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":0.2,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":5.5},{\\\"item\\\":{\\\"application\\\":\\\"xapi-trash-can\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":0.2,\\\"workerAmount\\\":1,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":5.7},{\\\"item\\\":{\\\"application\\\":\\\"x-api-ttg-product\\\",\\\"environment\\\":\\\"Sandbox\\\",\\\"environmentType\\\":\\\"sandbox\\\",\\\"businessGroup\\\":\\\"Tap To Go\\\",\\\"workerType\\\":1,\\\"workerAmount\\\":2,\\\"status\\\":\\\"STARTED\\\",\\\"averageCPUUtilisation\\\":0,\\\"endDate\\\":\\\"2021-01-16T13:09:32.406Z\\\",\\\"startDate\\\":\\\"2021-01-16T13:09:25.185Z\\\"},\\\"Total\\\":7.7}],\\\"totalVCoresSandBox\\\":28}}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
   <types:enrichment select="#50469a12-b7cb-4022-bb45-3641ddce81e8">
     <types:processor-declaration>
@@ -222,4 +245,14 @@ type main_api_outputpayload = Array<{|  item: {|    application: String,     env
   <types:enrichment select="#4f873875-f041-48d0-b7f3-cdc1d4d9df19"/>
   <types:enrichment select="#acc18887-8c34-42e6-87fd-bfd1a29064ee"/>
   <types:enrichment select="#9e02e436-4c0a-41f3-bff9-3e94a76df5b9"/>
+  <types:enrichment select="#85f027f1-bf49-4b54-8992-342aae57ed55"/>
+  <types:enrichment select="#71c0a956-32e5-46c4-aac3-8e8136e08797">
+    <types:processor-declaration>
+      <types:input-event>
+        <types:message>
+          <types:payload type="cpu_output_payload"/>
+        </types:message>
+      </types:input-event>
+    </types:processor-declaration>
+  </types:enrichment>
 </types:mule>

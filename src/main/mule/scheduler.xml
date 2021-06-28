@@ -37,20 +37,20 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626" objectStore="Object_store" />
 	</flow>
 	<flow name="schedulerCPU_metric_Collection_Flow" doc:id="159ac1e1-69a3-4943-a6c3-90fa438b5a2b" initialState="started">
-		<scheduler doc:name="Scheduler_collect_CPU" doc:id="5df677d3-b248-4dc9-9219-470c8c9f7d1a" >
-			<scheduling-strategy >
-				<fixed-frequency frequency="60" timeUnit="MINUTES"/>
+		<scheduler doc:name="Scheduler" doc:id="680d75d5-23cb-4926-b74a-fb977c22c083">
+			<scheduling-strategy>
+				<fixed-frequency frequency="60" timeUnit="MINUTES" />
 			</scheduling-strategy>
 		</scheduler>
-		<flow-ref doc:name="Flow Reference" doc:id="1eb5914a-00e4-49f8-9b26-33e7958303cf" name="schedulerSub_Flow_call_API_and_store_data"/>
+		<flow-ref doc:name="call CPU API" doc:id="1eb5914a-00e4-49f8-9b26-33e7958303cf" name="schedulerSub_Flow_call_API_and_store_data"/>
 	</flow>
 	<flow name="scheduler_Send_Email" doc:id="a0c329c7-d915-42de-9730-066f9b13e825">
-		<scheduler doc:name="Scheduler_Send_Email" doc:id="0a9fbf23-3d8f-481d-a27c-304a1fa2c4fb">
-			<scheduling-strategy>
-				<fixed-frequency frequency="${reportingFrequencyInDays}" timeUnit="DAYS" />
+		<scheduler doc:name="Scheduler" doc:id="a10a7697-9b47-4d77-a3ea-ac13a6a601e5" >
+			<scheduling-strategy >
+				<fixed-frequency timeUnit="DAYS" frequency="${reportingFrequencyInDays}"/>
 			</scheduling-strategy>
 		</scheduler>
-		<flow-ref doc:name="Flow Reference" doc:id="f167e1a2-ea63-4842-9f81-d8e97caf92dd" name="getReportSubflow" target="sheet_summary" />
+		<flow-ref doc:name="getReportSubflow" doc:id="f167e1a2-ea63-4842-9f81-d8e97caf92dd" name="getReportSubflow" target="sheet_summary" />
 		<flow-ref doc:name="Flow Reference" doc:id="e2847005-b492-4e4e-8ab4-cfcc4c1cb883" name="retrieveAll" target="sheet_detail" />
 		<ee:transform doc:name="Transform Message" doc:id="78ada9cc-26a2-4dbb-a3a5-b7f5579c5a88">
 			<ee:message>
@@ -88,7 +88,7 @@ output application/xlsx header=true
 		<logger level="INFO" doc:name="Logger" doc:id="f86eb3d3-a638-4d15-89e6-9f0c6e5d0cb9" message="Email sent!" />
 	</flow>
 	<sub-flow name="schedulerSub_Flow_call_API_and_store_data" doc:id="6ae44b56-608f-4ad5-99d0-b27e078b3b00" >
-		<http:request method="GET" doc:name="Request" doc:id="a9c297b9-2fe1-4404-8365-1b42d2e163ee" config-ref="HTTP_Request_configuration4" path="/${Anypoint.masterOrg}/cpu" responseTimeout="600000">
+		<http:request method="GET" doc:name="Call /cpu" doc:id="a9c297b9-2fe1-4404-8365-1b42d2e163ee" config-ref="HTTP_Request_configuration4" path="/${Anypoint.masterOrg}/cpu" responseTimeout="600000">
 			<http:query-params><![CDATA[#[output application/json
 //fun format(d: DateTime) = d as String {format: "yyyy-MM-dd'T'HH:mm:ss.SSS"} 
 ---
@@ -96,16 +96,22 @@ output application/xlsx header=true
 	"interval" : 3600000
 }]]]></http:query-params>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="71c0a956-32e5-46c4-aac3-8e8136e08797">
+		<ee:transform doc:name="Compute average cpu utilization" doc:id="71c0a956-32e5-46c4-aac3-8e8136e08797">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
+fun avgWeightedCpu(cpus, totalCpu) = if (!isEmpty(cpus) and totalCpu != null) 
+(cpus.item 
+	filter ((item, index) -> item != null) 
+	map ((item, index) -> item.workerAmount * item.averageCPUUtilisation * item.workerType) default [] 
+	reduce($$ + $) default 0
+) / totalCpu
+else 0
 ---
 {
-	"averageCPUUtilisationSandbox" : if (payload.sandbox.r.item != null) (avg(payload.sandbox.r.item.averageCPUUtilisation filter payload.sandbox.r.item != null default[])) else (0),
-	"averageCPUUtilisationProduction" : if (payload.production.r.item != null) (avg(payload.production.r.item.averageCPUUtilisation filter payload.production.r.item != null default[])) else (0),
-	"averageCPUUtilisationDesign" : if (payload.design.r.item != null) (avg(payload.design.r.item.averageCPUUtilisation filter payload.design.r.item != null default[])) else (0),
-
+	"averageCPUUtilisationSandbox" : avgWeightedCpu(payload.sandbox.r, payload.sandbox.totalVCoresSandBox),
+	"averageCPUUtilisationProduction" : avgWeightedCpu(payload.production.r, payload.production.totalVCoresProduction),
+	"averageCPUUtilisationDesign" :avgWeightedCpu(payload.design.r, payload.design.totalVCoresDesign),
 	"endDate" : payload.sandbox.r.item.endDate[0],
 
  	"payload": payload
