@@ -150,7 +150,6 @@ output application/json
 {
 	"X-ANYPNT-ENV-ID" : vars["ENV-ID"],
 	"Authorization" : "Bearer " ++ vars.access_token,
-//	"XSRF-TOKEN" : vars."XSRF-TOKEN",
 	"X-ANYPNT-ORG-ID" : vars."X-ANYPNT-ORG-ID"
 }]]]></http:headers>
 					<http:query-params><![CDATA[#[output application/java
@@ -290,11 +289,6 @@ var client_secret = Mule::p('Anypoint.ConnectedApp.client_secret')
 output application/java
 ---
 payload.access_token
-]]></ee:set-variable>
-				<ee:set-variable variableName="XSRF-TOKEN"><![CDATA[%dw 2.0
-output application/java
----
-((attributes.headers[7] splitBy(/[;\/]/))[0] splitBy(/[=\/]/))[1]
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>

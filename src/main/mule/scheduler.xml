@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 		<http:request-connection host="localhost" port="8081" usePersistentConnections="false">
 		</http:request-connection>
 	</http:request-config>
-	<configuration-properties doc:name="Configuration properties" doc:id="85c35aef-2305-4818-8d6d-78b1f1b4a93b" file="conf.properties" />
+	<configuration-properties doc:name="Configuration properties" doc:id="85c35aef-2305-4818-8d6d-78b1f1b4a93b" file="conf2.properties" />
 	<os:object-store name="Object_store" doc:name="Object store" doc:id="2c50a562-09f8-4673-a4b3-3a406dc40c2d" />
 	
 	<email:smtp-config name="Email_SMTP1" doc:name="Email SMTP" doc:id="e09c1b6f-2e05-4c19-b8a8-fd6c77348963" >
