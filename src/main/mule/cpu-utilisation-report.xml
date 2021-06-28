@@ -178,7 +178,7 @@ output application/json
 	"Authorization" : "Bearer " ++ vars.access_token
 }]]]></http:headers>
 		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="85f027f1-bf49-4b54-8992-342aae57ed55" >
+		<ee:transform doc:name="set totalVcores" doc:id="85f027f1-bf49-4b54-8992-342aae57ed55" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/java
@@ -208,15 +208,14 @@ else vars.totalVCoresDesign]]></ee:set-variable>
 				<logger level="INFO" doc:name="Logger" doc:id="41515973-363d-40c5-bd51-2ab55237517a" />
 			</when>
 			<otherwise >
-				<ee:transform doc:name="Transform Message" doc:id="9483922d-8d97-46be-8603-9ead5f4c9a51">
+				<ee:transform doc:name="add orgIds to business_groups" doc:id="9483922d-8d97-46be-8603-9ead5f4c9a51">
 			<ee:message>
 			</ee:message>
 					<ee:variables >
-						<ee:set-variable variableName="final_list_of_business_groups" ><![CDATA[%dw 2.0
+						<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
 output application/java
-var list = [vars."final_list_of_business_groups"]
 ---
-list ++ payload]]></ee:set-variable>
+vars."business_groups" as Array<String> ++ payload]]></ee:set-variable>
 					</ee:variables>
 		</ee:transform>
 				<foreach doc:name="For Each" doc:id="c72594ef-5eae-4b85-aba2-bd153de54ef1" collection="#[payload]">
@@ -253,6 +252,14 @@ if (attributes.queryParams["endDate"] == null) (now()) else  (attributes.queryPa
 output application/java
 ---
 attributes.queryParams["interval"]]]></ee:set-variable>
+				<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
+output application/java
+---
+[attributes.uriParams."X-ANYPNT-ORG-ID"] as Array<String>]]></ee:set-variable>
+				<ee:set-variable variableName="final_list" ><![CDATA[%dw 2.0
+output application/java
+---
+null]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <http:request method="POST" doc:name="Request LOGIN" doc:id="50469a12-b7cb-4022-bb45-3641ddce81e8" config-ref="HTTP_Request_configuration1" path="/" outputMimeType="application/json" responseTimeout="600000">
@@ -289,35 +296,11 @@ output application/java
 ---
 ((attributes.headers[7] splitBy(/[;\/]/))[0] splitBy(/[=\/]/))[1]
 ]]></ee:set-variable>
-				<ee:set-variable variableName="final_list"><![CDATA[%dw 2.0
-output application/java
----
-null]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="0590155e-6d61-4ed4-bfa5-23d75f6fbd79" message="#[vars]" />
-		<ee:transform doc:name="Set Master Org ID" doc:id="d4221825-ae44-477d-aca8-01abc387f04f">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="final_list_of_business_groups"><![CDATA[%dw 2.0
-output application/java
----
-vars."X-ANYPNT-ORG-ID"]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups" />
-		<ee:transform doc:name="flatten list of business groups" doc:id="4f873875-f041-48d0-b7f3-cdc1d4d9df19">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="final_list_of_business_groups"><![CDATA[%dw 2.0
-output application/java
----
-flatten(vars.final_list_of_business_groups)]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<foreach doc:name="For Each business group" doc:id="7807b418-1af3-4162-8613-320a60dd4a3c" collection="#[vars.final_list_of_business_groups]">
+		<flow-ref doc:name="Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups"/>
+		<foreach doc:name="For Each business group" doc:id="7807b418-1af3-4162-8613-320a60dd4a3c" collection="#[vars.business_groups]">
 			<ee:transform doc:name="Transform Message" doc:id="acc18887-8c34-42e6-87fd-bfd1a29064ee">
 				<ee:message>
 				</ee:message>
