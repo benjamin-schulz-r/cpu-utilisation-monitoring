@@ -275,7 +275,7 @@ var client_secret = Mule::p('Anypoint.ConnectedApp.client_secret')
 }]]]></http:headers>
 		</http:request>
 		
-		<ee:transform doc:name="Transform Message" doc:id="42b38a3e-65bd-4944-973c-9fc8ccbeab4a">
+		<ee:transform doc:name="Set Access Token" doc:id="42b38a3e-65bd-4944-973c-9fc8ccbeab4a">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
@@ -296,7 +296,7 @@ null]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="0590155e-6d61-4ed4-bfa5-23d75f6fbd79" message="#[vars]" />
-		<ee:transform doc:name="Transform Message" doc:id="d4221825-ae44-477d-aca8-01abc387f04f">
+		<ee:transform doc:name="Set Master Org ID" doc:id="d4221825-ae44-477d-aca8-01abc387f04f">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
@@ -307,7 +307,7 @@ vars."X-ANYPNT-ORG-ID"]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups" />
-		<ee:transform doc:name="Transform Message" doc:id="4f873875-f041-48d0-b7f3-cdc1d4d9df19">
+		<ee:transform doc:name="flatten list of business groups" doc:id="4f873875-f041-48d0-b7f3-cdc1d4d9df19">
 			<ee:message>
 			</ee:message>
 			<ee:variables>
