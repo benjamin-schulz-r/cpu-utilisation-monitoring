@@ -16,7 +16,7 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 	</http:request-config>
 	<flow name="RetrieveAllData_HTTP_Flow" doc:id="5da8ce40-c463-4acd-b2ae-618dfec8c33a">
 		<http:listener doc:name="Listener" doc:id="61cfdd42-3498-40c7-9fdf-218b1d8fe7f5" config-ref="cpu-utilisation-report-httpListenerConfig" path="/retrieveAll" />
-		<flow-ref doc:name="Flow Reference" doc:id="a93d78f8-f110-4c88-8cd6-ec1fd6591d42" name="retrieveAll" />
+		<flow-ref doc:name="retrieveAll" doc:id="a93d78f8-f110-4c88-8cd6-ec1fd6591d42" name="retrieveAll" />
 	</flow>
 	<flow name="Test_Scheduler" doc:id="c76dbd69-9b09-469e-9146-be0d4826778d" >
 		<http:listener doc:name="Listener" doc:id="8ecea91f-4a2e-4a0c-81cd-754a76bc131c" config-ref="cpu-utilisation-report-httpListenerConfig" path="/collectMetrics"/>
@@ -28,7 +28,7 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 	</flow>
 	<flow name="ClearAllData" doc:id="402bc726-f564-430c-87d4-d60f8ec1d61c">
 		<http:listener doc:name="Listener" doc:id="afd86f7c-1491-4a43-9f69-e7b6f03d34f0" config-ref="cpu-utilisation-report-httpListenerConfig" path="/clear" />
-		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626"/>
+		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626" objectStore="Object_store"/>
 	</flow>
 	<flow name="schedulerCPU_metric_Collection_Flow" doc:id="159ac1e1-69a3-4943-a6c3-90fa438b5a2b" initialState="started">
 		<scheduler doc:name="Scheduler" doc:id="680d75d5-23cb-4926-b74a-fb977c22c083">
@@ -94,22 +94,21 @@ output application/xlsx header=true
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/java
-fun avgWeightedCpu(cpus, totalCpu) = if (!isEmpty(cpus) and totalCpu != null) 
+fun avgWeightedCpu(cpus, totalCpu) = if(totalCpu == null or totalCpu == 0) "error" else
+if (!isEmpty(cpus)) 
 (cpus.item 
 	filter ((item, index) -> item != null) 
 	map ((item, index) -> item.workerAmount * item.averageCPUUtilisation * item.workerType) default [] 
 	reduce($$ + $) default 0
 ) / totalCpu
-else 0
+else "error"
 ---
 {
 	"averageCPUUtilisationSandbox" : avgWeightedCpu(payload.sandbox.r, payload.sandbox.totalVCoresSandBox),
 	"averageCPUUtilisationProduction" : avgWeightedCpu(payload.production.r, payload.production.totalVCoresProduction),
 	"averageCPUUtilisationDesign" :avgWeightedCpu(payload.design.r, payload.design.totalVCoresDesign),
 	"endDate" : payload.sandbox.r.item.endDate[0],
-
  	"payload": payload
-	
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
@@ -119,12 +118,12 @@ output application/java
 payload.sandbox.r.item.endDate[0] as DateTime as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]">
+		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]" objectStore="Object_store">
 		</os:store>
 		<logger level="INFO" doc:name="Logger" doc:id="27001ac7-1da5-40bd-b901-9ddc1c3472e0" message="Data stored in Object Store" />
 	</sub-flow>
 	<sub-flow name="retrieveAll" doc:id="5933851f-9cbf-41cc-9ace-7f71c464c95f" >
-		<os:retrieve-all doc:name="Retrieve all" doc:id="5e44cde5-a0e1-4b5c-b2c6-1b3a133a88c1"/>
+		<os:retrieve-all doc:name="Retrieve all" doc:id="5e44cde5-a0e1-4b5c-b2c6-1b3a133a88c1" objectStore="Object_store"/>
 		<ee:transform doc:name="Transform Message" doc:id="ab15a28b-ad84-4352-9ac3-6d6bd8051374">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -135,7 +134,7 @@ payload]]></ee:set-payload>
 		</ee:transform>
 	</sub-flow>
 	<sub-flow name="getReportSubflow" doc:id="b60583ff-cadb-4c37-b4f0-68244e59933b" >
-		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02"/>
+		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02" objectStore="Object_store"/>
 		<ee:transform doc:name="Transform Message" doc:id="e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -155,7 +154,7 @@ payload pluck (value,key)  -> {
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-payload orderBy(-$.epoch)
+payload orderBy($.epoch)
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

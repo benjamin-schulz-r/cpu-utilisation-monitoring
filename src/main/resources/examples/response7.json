@@ -13,14 +13,14 @@
           "workerType": 0.1,
           "workerAmount": 1,
           "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
+          "averageCPUUtilisation": 18.976788624660685,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
         },
         "Total": 0.1
       }
     ],
-    "totalVCoreProduction": 4
+    "totalVCoresProduction": 4
   },
   "design": {
     "l": [
@@ -38,21 +38,6 @@
     "r": [
       {
         "item": {
-          "application": "ah-ttg-ui",
-          "environment": "Sandbox",
-          "environmentType": "sandbox",
-          "businessGroup": "Tap To Go",
-          "workerType": 0.1,
-          "workerAmount": 1,
-          "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
-        },
-        "Total": 0.1
-      },
-      {
-        "item": {
           "application": "xapi-ttg-esl",
           "environment": "Sandbox",
           "environmentType": "sandbox",
@@ -60,11 +45,11 @@
           "workerType": 2,
           "workerAmount": 1,
           "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
+          "averageCPUUtilisation": 2.265759778950893,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
         },
-        "Total": 2.1
+        "Total": 2
       },
       {
         "item": {
@@ -75,56 +60,11 @@
           "workerType": 2,
           "workerAmount": 1,
           "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
+          "averageCPUUtilisation": 2.2119180482233034,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
         },
-        "Total": 4.1
-      },
-      {
-        "item": {
-          "application": "s-api-ttg-customer",
-          "environment": "Sandbox",
-          "environmentType": "sandbox",
-          "businessGroup": "Tap To Go",
-          "workerType": 1,
-          "workerAmount": 1,
-          "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
-        },
-        "Total": 5.1
-      },
-      {
-        "item": {
-          "application": "x-api-ttg-mobile",
-          "environment": "Sandbox",
-          "environmentType": "sandbox",
-          "businessGroup": "Tap To Go",
-          "workerType": 0.1,
-          "workerAmount": 2,
-          "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
-        },
-        "Total": 5.3
-      },
-      {
-        "item": {
-          "application": "ux-ah-demo-jexd",
-          "environment": "Sandbox",
-          "environmentType": "sandbox",
-          "businessGroup": "Tap To Go",
-          "workerType": 0.2,
-          "workerAmount": 1,
-          "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
-        },
-        "Total": 5.5
+        "Total": 4
       },
       {
         "item": {
@@ -135,11 +75,41 @@
           "workerType": 0.2,
           "workerAmount": 1,
           "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
+          "averageCPUUtilisation": 2.186805603857836,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
         },
-        "Total": 5.7
+        "Total": 4.2
+      },
+      {
+        "item": {
+          "application": "ah-ttg-ui",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.1,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 1.9022215932304798,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
+        },
+        "Total": 4.3
+      },
+      {
+        "item": {
+          "application": "s-api-ttg-customer",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 1,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 1.8454172224690593,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
+        },
+        "Total": 5.3
       },
       {
         "item": {
@@ -150,9 +120,39 @@
           "workerType": 1,
           "workerAmount": 2,
           "status": "STARTED",
-          "averageCPUUtilisation": 0,
-          "endDate": "2021-01-16T13:09:32.406Z",
-          "startDate": "2021-01-16T13:09:25.185Z"
+          "averageCPUUtilisation": 1.8168057480752704,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
+        },
+        "Total": 7.3
+      },
+      {
+        "item": {
+          "application": "x-api-ttg-mobile",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.1,
+          "workerAmount": 2,
+          "status": "STARTED",
+          "averageCPUUtilisation": 1.764861074169985,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
+        },
+        "Total": 7.5
+      },
+      {
+        "item": {
+          "application": "ux-ah-demo-jexd",
+          "environment": "Sandbox",
+          "environmentType": "sandbox",
+          "businessGroup": "Tap To Go",
+          "workerType": 0.2,
+          "workerAmount": 1,
+          "status": "STARTED",
+          "averageCPUUtilisation": 1.4891666666666667,
+          "endDate": "2021-06-29T10:49:59.351+02:00",
+          "startDate": "2021-06-29T09:49:59.351+02:00"
         },
         "Total": 7.7
       }
