@@ -199,15 +199,6 @@ type cpu_output_payload = {|
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
-  <types:enrichment select="#b8aa4e5b-73f7-4b1f-9622-1e7581c3fd47">
-    <types:processor-declaration>
-      <types:output-event>
-        <types:message>
-          <types:payload type="environments_output_payload"/>
-        </types:message>
-      </types:output-event>
-    </types:processor-declaration>
-  </types:enrichment>
   <types:enrichment select="#b89ef5fa-47d9-4cda-b8a2-f1f2c680e1e2">
     <types:processor-declaration>
       <types:output-event>
@@ -239,9 +230,7 @@ type cpu_output_payload = {|
     </types:processor-declaration>
   </types:enrichment>
   <types:enrichment select="#78ada9cc-26a2-4dbb-a3a5-b7f5579c5a88"/>
-  <types:enrichment select="#9483922d-8d97-46be-8603-9ead5f4c9a51"/>
   <types:enrichment select="#7ffba688-3d26-4b7c-9fe8-988ee38f86c6"/>
-  <types:enrichment select="#acc18887-8c34-42e6-87fd-bfd1a29064ee"/>
   <types:enrichment select="#9e02e436-4c0a-41f3-bff9-3e94a76df5b9"/>
   <types:enrichment select="#85f027f1-bf49-4b54-8992-342aae57ed55"/>
   <types:enrichment select="#71c0a956-32e5-46c4-aac3-8e8136e08797">
@@ -253,4 +242,6 @@ type cpu_output_payload = {|
       </types:input-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#0fed7cdb-d78a-45af-b460-7e43e7fcf480"/>
+  <types:enrichment select="#828e783e-64a1-418c-a329-787e93973901"/>
 </types:mule>

@@ -5,7 +5,7 @@
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd">
-	<configuration-properties doc:name="Configuration properties" doc:id="b084ba34-419e-4aea-8c41-d282ff4330c3" file="conf.properties" />
+	<configuration-properties doc:name="Configuration properties" doc:id="b084ba34-419e-4aea-8c41-d282ff4330c3" file="conf2.properties" />
 	<email:smtp-config name="Email_SMTP1" doc:name="Email SMTP" doc:id="fd00f36a-c993-4c90-b23c-6f0367e7c658" >
 		<email:smtp-connection host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="${smtp.password}" connectionTimeout="30" readTimeout="30" writeTimeout="30" />
 	</email:smtp-config>

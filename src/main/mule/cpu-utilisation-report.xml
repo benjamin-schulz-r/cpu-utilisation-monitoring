@@ -201,6 +201,12 @@ output application/java
 ---
 if (payload.isMaster) payload.entitlements.vCoresDesign.assigned as Number
 else vars.totalVCoresDesign]]></ee:set-variable>
+				<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	(payload.id) : payload.environments 
+} ++ vars.business_groups as Object default {}]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<choice doc:name="Choice" doc:id="ab1d1574-02af-4cfb-a597-36f4a686bbd6" >
@@ -208,16 +214,6 @@ else vars.totalVCoresDesign]]></ee:set-variable>
 				<logger level="INFO" doc:name="Logger" doc:id="41515973-363d-40c5-bd51-2ab55237517a" />
 			</when>
 			<otherwise >
-				<ee:transform doc:name="add orgIds to business_groups" doc:id="9483922d-8d97-46be-8603-9ead5f4c9a51">
-			<ee:message>
-			</ee:message>
-					<ee:variables >
-						<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
-output application/java
----
-vars."business_groups" as Array<String> ++ payload]]></ee:set-variable>
-					</ee:variables>
-		</ee:transform>
 				<foreach doc:name="For Each" doc:id="c72594ef-5eae-4b85-aba2-bd153de54ef1" collection="#[payload]">
 					<ee:transform doc:name="Transform Message" doc:id="7ffba688-3d26-4b7c-9fe8-988ee38f86c6" >
 						<ee:message >
@@ -235,7 +231,7 @@ payload]]></ee:set-variable>
 		</choice>
 	</flow>
 	<flow name="get:\(X-ANYPNT-ORG-ID)\cpu:cpu-utilisation-report-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="Set queryParams as variables">
+        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" doc:name="Set queryParams as variables" doc:id="828e783e-64a1-418c-a329-787e93973901">
             <ee:variables>
                 <ee:set-variable variableName="X-ANYPNT-ORG-ID"><![CDATA[attributes.uriParams.'X-ANYPNT-ORG-ID']]></ee:set-variable>
 				<ee:set-variable variableName="startDate"><![CDATA[%dw 2.0
@@ -252,14 +248,15 @@ if (attributes.queryParams["endDate"] == null) (now()) else  (attributes.queryPa
 output application/java
 ---
 attributes.queryParams["interval"]]]></ee:set-variable>
-				<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
-output application/java
----
-[attributes.uriParams."X-ANYPNT-ORG-ID"] as Array<String>]]></ee:set-variable>
 				<ee:set-variable variableName="final_list" ><![CDATA[%dw 2.0
 output application/java
 ---
 null]]></ee:set-variable>
+				<ee:set-variable variableName="business_groups" ><![CDATA[%dw 2.0
+output application/java
+---
+{
+}]]></ee:set-variable>
             </ee:variables>
         </ee:transform>
         <http:request method="POST" doc:name="Request LOGIN" doc:id="50469a12-b7cb-4022-bb45-3641ddce81e8" config-ref="HTTP_Request_configuration1" path="/" outputMimeType="application/json" responseTimeout="600000">
@@ -293,48 +290,25 @@ payload.access_token
 ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="0590155e-6d61-4ed4-bfa5-23d75f6fbd79" message="#[vars]" />
 		<flow-ref doc:name="Get all business groups" doc:id="f3575c4b-f6dc-4aa2-a2a4-18738b17bd0d" name="cpu-utilisation-get-business-groups"/>
 		<foreach doc:name="For Each business group" doc:id="7807b418-1af3-4162-8613-320a60dd4a3c" collection="#[vars.business_groups]">
-			<ee:transform doc:name="Transform Message" doc:id="acc18887-8c34-42e6-87fd-bfd1a29064ee">
-				<ee:message>
-				</ee:message>
-				<ee:variables>
-					<ee:set-variable variableName="X-ANYPNT-ORG-ID"><![CDATA[%dw 2.0
-output application/java
----
-payload]]></ee:set-variable>
-				</ee:variables>
-			</ee:transform>
-			<http:request method="GET" doc:name="Request Environments" doc:id="b8aa4e5b-73f7-4b1f-9622-1e7581c3fd47" config-ref="HTTP_Request_configuration" path='#[vars."X-ANYPNT-ORG-ID"]' responseTimeout="600000">
-			<http:headers><![CDATA[#[output application/java
----
-{
-	"Authorization" : "Bearer " ++ vars.access_token
-}]]]></http:headers>
-		</http:request>
 			<ee:transform doc:name="Transform Message" doc:id="9e02e436-4c0a-41f3-bff9-3e94a76df5b9">
 				<ee:message>
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload[0]]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
-					<ee:set-variable variableName="environments"><![CDATA[%dw 2.0
+					<ee:set-variable variableName="X-ANYPNT-ORG-ID" ><![CDATA[%dw 2.0
 output application/java
 ---
-payload.environments]]></ee:set-variable>
-					<ee:set-variable variableName="businessGroup"><![CDATA[%dw 2.0
-output application/java
----
-payload.name]]></ee:set-variable>
+keysOf(payload)[0] as String]]></ee:set-variable>
 				</ee:variables>
 			</ee:transform>
-			<foreach doc:name="For Each Environment" doc:id="ce6debaf-f1a5-44cf-a76a-2f08b8e335a6" collection="#[vars.environments]">
-			<ee:transform doc:name="Transform Message" doc:id="0fed7cdb-d78a-45af-b460-7e43e7fcf480">
+			<foreach doc:name="For Each Environment" doc:id="ce6debaf-f1a5-44cf-a76a-2f08b8e335a6" collection="#[payload]">
+				<ee:transform doc:name="Transform Message" doc:id="0fed7cdb-d78a-45af-b460-7e43e7fcf480">
 				<ee:message>
-					<ee:set-payload><![CDATA[%dw 2.0
-output application/java
----
-{
-}]]></ee:set-payload>
 				</ee:message>
 				<ee:variables>
 					<ee:set-variable variableName="ENV-ID"><![CDATA[%dw 2.0
@@ -408,7 +382,7 @@ output application/json
 	"application" : vars."application-name",
 	"environment" : vars."ENV-NAME",
 	"environmentType" : vars."ENV-TYPE",
-	"businessGroup" : vars.businessGroup,
+	"businessGroup" : vars."X-ANYPNT-ORG-ID",
 	"workerType" : vars."application-worker-type",
 	"workerAmount" : vars."application-worker-amount",
 	"status"  : vars."application-status",
