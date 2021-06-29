@@ -14,12 +14,6 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 		<http:request-connection host="localhost" port="8081" usePersistentConnections="false">
 		</http:request-connection>
 	</http:request-config>
-	<configuration-properties doc:name="Configuration properties" doc:id="85c35aef-2305-4818-8d6d-78b1f1b4a93b" file="conf2.properties" />
-	<os:object-store name="Object_store" doc:name="Object store" doc:id="2c50a562-09f8-4673-a4b3-3a406dc40c2d" />
-	
-	<email:smtp-config name="Email_SMTP1" doc:name="Email SMTP" doc:id="e09c1b6f-2e05-4c19-b8a8-fd6c77348963" >
-		<email:smtp-connection host="${smtp.host}" port="${smtp.port}" user="${smtp.user}" password="${smtp.password}" connectionTimeout="30" readTimeout="30" writeTimeout="30"/>
-	</email:smtp-config>
 	<flow name="RetrieveAllData_HTTP_Flow" doc:id="5da8ce40-c463-4acd-b2ae-618dfec8c33a">
 		<http:listener doc:name="Listener" doc:id="61cfdd42-3498-40c7-9fdf-218b1d8fe7f5" config-ref="cpu-utilisation-report-httpListenerConfig" path="/retrieveAll" />
 		<flow-ref doc:name="Flow Reference" doc:id="a93d78f8-f110-4c88-8cd6-ec1fd6591d42" name="retrieveAll" />
@@ -34,7 +28,7 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 	</flow>
 	<flow name="ClearAllData" doc:id="402bc726-f564-430c-87d4-d60f8ec1d61c">
 		<http:listener doc:name="Listener" doc:id="afd86f7c-1491-4a43-9f69-e7b6f03d34f0" config-ref="cpu-utilisation-report-httpListenerConfig" path="/clear" />
-		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626" objectStore="Object_store" />
+		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626"/>
 	</flow>
 	<flow name="schedulerCPU_metric_Collection_Flow" doc:id="159ac1e1-69a3-4943-a6c3-90fa438b5a2b" initialState="started">
 		<scheduler doc:name="Scheduler" doc:id="680d75d5-23cb-4926-b74a-fb977c22c083">
@@ -70,7 +64,7 @@ output application/xlsx header=true
 				<compression:zip-compressor />
 			</compression:compressor>
 		</compression:compress>
-		<email:send doc:name="Send Email" doc:id="96656c75-920e-44c7-8deb-f67b1b4a6f1f" config-ref="Email_SMTP1" fromAddress="${smtp.emailFrom}" subject="CPU Report ${customer.name}">
+		<email:send doc:name="Send Email" doc:id="96656c75-920e-44c7-8deb-f67b1b4a6f1f" fromAddress="${smtp.emailFrom}" subject="CPU Report ${customer.name}" config-ref="Email_SMTP1">
 			<email:to-addresses>
 				<email:to-address value="${smtp.emailTo}" />
 			</email:to-addresses>
@@ -125,12 +119,12 @@ output application/java
 payload.sandbox.r.item.endDate[0] as DateTime as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]" objectStore="Object_store">
+		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]">
 		</os:store>
 		<logger level="INFO" doc:name="Logger" doc:id="27001ac7-1da5-40bd-b901-9ddc1c3472e0" message="Data stored in Object Store" />
 	</sub-flow>
 	<sub-flow name="retrieveAll" doc:id="5933851f-9cbf-41cc-9ace-7f71c464c95f" >
-		<os:retrieve-all doc:name="Retrieve all" doc:id="5e44cde5-a0e1-4b5c-b2c6-1b3a133a88c1" objectStore="Object_store" />
+		<os:retrieve-all doc:name="Retrieve all" doc:id="5e44cde5-a0e1-4b5c-b2c6-1b3a133a88c1"/>
 		<ee:transform doc:name="Transform Message" doc:id="ab15a28b-ad84-4352-9ac3-6d6bd8051374">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -141,7 +135,7 @@ payload]]></ee:set-payload>
 		</ee:transform>
 	</sub-flow>
 	<sub-flow name="getReportSubflow" doc:id="b60583ff-cadb-4c37-b4f0-68244e59933b" >
-		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02" objectStore="Object_store" />
+		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02"/>
 		<ee:transform doc:name="Transform Message" doc:id="e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0

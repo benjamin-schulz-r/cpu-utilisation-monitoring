@@ -228,7 +228,7 @@ output application/java
 payload]]></ee:set-variable>
 						</ee:variables>
 					</ee:transform>
-					<flow-ref doc:name="Flow Reference" doc:id="5661b28b-1e6c-4447-9a10-3e21065a6af8" name="cpu-utilisation-get-business-groups" />
+					<flow-ref doc:name="get-business-groups" doc:id="5661b28b-1e6c-4447-9a10-3e21065a6af8" name="cpu-utilisation-get-business-groups" />
 				</foreach>
 			</otherwise>
 		</choice>
