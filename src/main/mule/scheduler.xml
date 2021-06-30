@@ -96,29 +96,31 @@ output application/xlsx header=true
 output application/java
 fun avgWeightedCpu(cpus, totalCpu) = if(totalCpu == null or totalCpu == 0) "error" else
 if (!isEmpty(cpus)) 
-(cpus.item 
+(cpus 
 	filter ((item, index) -> item != null) 
 	map ((item, index) -> item.workerAmount * item.averageCPUUtilisation * item.workerType) default [] 
 	reduce($$ + $) default 0
 ) / totalCpu
-else "error"
+else 0
 ---
 {
-	"averageCPUUtilisationSandbox" : avgWeightedCpu(payload.sandbox.r, payload.sandbox.totalVCoresSandBox),
-	"averageCPUUtilisationProduction" : avgWeightedCpu(payload.production.r, payload.production.totalVCoresProduction),
-	"averageCPUUtilisationDesign" :avgWeightedCpu(payload.design.r, payload.design.totalVCoresDesign),
-	"endDate" : payload.sandbox.r.item.endDate[0],
+	"averageCPUUtilisationSandbox" : avgWeightedCpu(payload.sandbox.items, payload.sandbox.totalVCoresSandBox),
+	"vcoresAllocatedSandbox": payload.sandbox.totalAllocatedVcoresSandbox default "none",
+	"totalVcoresSandBox": payload.sandbox.totalVCoresSandBox,
+	"averageCPUUtilisationProduction" : avgWeightedCpu(payload.production.items, payload.production.totalVCoresProduction),
+	"vcoresAllocatedProduction": payload.production.totalAllocatedVcoresProduction default "none",
+	"totalVcoresProduction": payload.production.totalVCoresProduction,
+	"averageCPUUtilisationDesign" :avgWeightedCpu(payload.design.items, payload.design.totalVCoresDesign),
+	"vcoresAllocatedDesign": payload.design.totalAllocatedVcoresDesign default "none",
+	"totalVcoresDesign": payload.design.totalVCoresDesign,
+	"endDate" : payload.endDate,
  	"payload": payload
 }]]></ee:set-payload>
 			</ee:message>
 			<ee:variables >
-				<ee:set-variable variableName="epoch_enddate" ><![CDATA[%dw 2.0
-output application/java
----
-payload.sandbox.r.item.endDate[0] as DateTime as Number]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[vars.epoch_enddate]" objectStore="Object_store">
+		<os:store doc:name="Store" doc:id="9e101d32-af47-4ae0-b78c-7f745276ad28" key="#[payload.endDate as DateTime as Number]" objectStore="Object_store">
 		</os:store>
 		<logger level="INFO" doc:name="Logger" doc:id="27001ac7-1da5-40bd-b901-9ddc1c3472e0" message="Data stored in Object Store" />
 	</sub-flow>
@@ -144,8 +146,14 @@ payload pluck (value,key)  -> {
 	epoch: key,
 	Date: key as Number as DateTime as String  {format: "yyyy-MM-dd'T'HH:mm" } ,
     averageCPUUtilisationSandbox: value.averageCPUUtilisationSandbox as String {format: "0.00", roundMode:"DOWN"},
+    vcoresAllocatedSandbox: value.vcoresAllocatedSandbox,
+	totalVcoresSandBox: value.totalVcoresSandBox,
     averageCPUUtilisationProduction: value.averageCPUUtilisationProduction as String {format: "0.00", roundMode:"DOWN"},
-    averageCPUUtilisationDesign: value.averageCPUUtilisationDesign as String {format: "0.00", roundMode:"DOWN"} 
+    vcoresAllocatedProduction: value.vcoresAllocatedProduction,
+	totalVcoresProduction: value.totalVcoresProduction,
+    averageCPUUtilisationDesign: value.averageCPUUtilisationDesign as String {format: "0.00", roundMode:"DOWN"},
+	vcoresAllocatedDesign: value.vcoresAllocatedDesign,
+	totalVcoresDesign: value.totalVcoresDesign, 
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
