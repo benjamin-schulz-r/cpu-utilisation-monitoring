@@ -137,7 +137,7 @@ payload]]></ee:set-payload>
 	</sub-flow>
 	<sub-flow name="getReportSubflow" doc:id="b60583ff-cadb-4c37-b4f0-68244e59933b" >
 		<os:retrieve-all doc:name="Retrieve all" doc:id="75ab12ed-ca3f-4081-889a-838342ec7f02" objectStore="Object_store"/>
-		<ee:transform doc:name="Transform Message" doc:id="e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f">
+		<ee:transform doc:name="select xls sheet  data" doc:id="e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -157,7 +157,7 @@ payload pluck (value,key)  -> {
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="6dc66aa3-b9b6-469c-967d-f79aa28093ef">
+		<ee:transform doc:name="order by timestamp" doc:id="6dc66aa3-b9b6-469c-967d-f79aa28093ef">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
