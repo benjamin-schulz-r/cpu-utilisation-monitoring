@@ -26,6 +26,10 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 		<http:listener doc:name="Listener" doc:id="a8001346-5ab0-4052-92f7-8a28dd1f83f7" config-ref="cpu-utilisation-report-httpListenerConfig" path="getReport" />
 		<flow-ref doc:name="get Report" doc:id="fd154749-9e93-4486-a069-493e0a4919a6" name="getReportSubflow" />
 	</flow>
+	<flow name="sendReport" doc:id="92d3cd58-e580-42b0-b84d-31b53e06fe64" >
+		<http:listener doc:name="Listener" doc:id="6ce9e7ac-1b06-48ea-845a-f151819179bf" config-ref="cpu-utilisation-report-httpListenerConfig" path="/reports"/>
+		<flow-ref doc:name="Flow Reference" doc:id="c9681cde-0625-4d85-a085-ec8e29da4894" name="getReports_and_send_email"/>
+	</flow>
 	<flow name="ClearAllData" doc:id="402bc726-f564-430c-87d4-d60f8ec1d61c">
 		<http:listener doc:name="Listener" doc:id="afd86f7c-1491-4a43-9f69-e7b6f03d34f0" config-ref="cpu-utilisation-report-httpListenerConfig" path="/clear" />
 		<os:clear doc:name="Clear" doc:id="878088c8-1403-4457-9c66-049f0b5f8626" objectStore="Object_store"/>
@@ -44,6 +48,9 @@ http://www.mulesoft.org/schema/mule/compression http://www.mulesoft.org/schema/m
 				<fixed-frequency timeUnit="DAYS" frequency="${reportingFrequencyInDays}"/>
 			</scheduling-strategy>
 		</scheduler>
+		<flow-ref doc:name="Flow Reference" doc:id="e76aab54-2446-45a2-b55c-886216c05064" name="getReports_and_send_email"/>
+	</flow>
+	<sub-flow name="getReports_and_send_email" doc:id="4d05d2e3-aec0-44f2-8b04-9e5216f21c20" >
 		<flow-ref doc:name="getReportSubflow" doc:id="f167e1a2-ea63-4842-9f81-d8e97caf92dd" name="getReportSubflow" target="sheet_summary" />
 		<flow-ref doc:name="retrieveAll" doc:id="e2847005-b492-4e4e-8ab4-cfcc4c1cb883" name="retrieveAll" target="sheet_detail" />
 		<ee:transform doc:name="create excel sheet" doc:id="78ada9cc-26a2-4dbb-a3a5-b7f5579c5a88">
@@ -59,8 +66,8 @@ output application/xlsx header=true
 			</ee:variables>
 		</ee:transform>
 		<compression:compress doc:name="Compress stored data" doc:id="2c4ea190-3fff-4705-8938-9ae18aa0af21" target="sheetDetailZipped">
-			<compression:content ><![CDATA[#[vars.sheet_detail]]]></compression:content>
-			<compression:compressor >
+			<compression:content><![CDATA[#[vars.sheet_detail]]]></compression:content>
+			<compression:compressor>
 				<compression:zip-compressor />
 			</compression:compressor>
 		</compression:compress>
@@ -80,7 +87,7 @@ output application/xlsx header=true
 			
 		</email:send>
 		<logger level="INFO" doc:name="Logger" doc:id="f86eb3d3-a638-4d15-89e6-9f0c6e5d0cb9" message="Email sent!" />
-	</flow>
+	</sub-flow>
 	<sub-flow name="schedulerSub_Flow_call_API_and_store_data" doc:id="6ae44b56-608f-4ad5-99d0-b27e078b3b00" >
 		<http:request method="GET" doc:name="Call /cpu" doc:id="a9c297b9-2fe1-4404-8365-1b42d2e163ee" config-ref="HTTP_Request_configuration4" path="/${Anypoint.masterOrg}/cpu" responseTimeout="600000">
 			<http:query-params><![CDATA[#[output application/json
