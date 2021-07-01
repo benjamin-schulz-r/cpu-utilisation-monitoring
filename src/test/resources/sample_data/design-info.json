@@ -3,8 +3,6 @@
     "e0a79f3b-2f5d-4477-a9f4-ae5b3757a08f": {
       "payload": "sample_data/java.dwl"
     },
-    "71c0a956-32e5-46c4-aac3-8e8136e08797": {
-      "payload": "sample_data/json.json"
-    }
+    "71c0a956-32e5-46c4-aac3-8e8136e08797": {}
   }
 }

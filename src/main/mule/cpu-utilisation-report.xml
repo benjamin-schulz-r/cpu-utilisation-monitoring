@@ -417,18 +417,15 @@ var list = [vars."final_list"]
 			 
 		</foreach>
 		</foreach>
-		<ee:transform doc:name="Transform Message" doc:id="a215ec16-61f2-424e-862d-08e9a6a4fdd0">
+		<ee:transform doc:name="group applications by environment type" doc:id="a215ec16-61f2-424e-862d-08e9a6a4fdd0">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 
 //order the list of mule apps desc by CPU Utilisation
-vars.final_list orderBy(-$.averageCPUUtilisation) groupBy($.environmentType)
+vars.final_list groupBy($.environmentType)
 
-//order the list of mule apps desc by largest core utilization
-//vars.final_list orderBy(-$.workerAmount * $.workerType) groupBy($.environmentType)
-//vars.final_list orderBy(-$.workerAmount * $.workerType) groupBy($.environmentType)
 ]]></ee:set-payload>
 			</ee:message>
 			<ee:variables>
@@ -442,57 +439,25 @@ output application/java
 }]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="130ec4c2-f51d-4d80-babd-11de06dbc09d">
+		<ee:transform doc:name="add allocated Vcores per environment" doc:id="130ec4c2-f51d-4d80-babd-11de06dbc09d">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-fun accumulateValues (varName, keyName, add) = 
-using (addValue = 
-     Java::invoke(			                   //invoke java.util.HashMap
-	    'java.util.HashMap',
-    'put(Object,Object)',	                         //method used to add values
-	     varName,                               //variable for accumulating values
-		  {								
-		     arg0: keyName,                                          // key name
-		     arg1: add( Java::invoke(              //add to accumulator variable
-                    'java.util.HashMap',
-                    'get(Object)',                         //method used to get value
-                     varName,
-                     {arg0: keyName}
-                                )
-          			         )
-				           }
-			            )
-		             )
- Java::invoke('java.util.HashMap', 'get(Object)', varName, {arg0: keyName})  //return
+fun allocatedVcores(array) = array default [] 
+filter ((item, index) -> item != null) 
+reduce ((item, accumulator = 0) -> accumulator + (item.workerType * item.workerAmount))
 ---
-//This counts the number of cores that each application has. The payload is already ordered by desc by the highest cpu core utilization. So the top application will be the ones using the normal contract
 {
-	sandbox: payload.sandbox map (value,index) -> {
-				"item": value,
-				"Total" : accumulateValues (
-			vars.accumulatorVar, 'intKeyNameSandbox', (accVar) -> accVar + (value.workerAmount*value.workerType)
-			       )
-			    },
-	design: payload.design map (value,index) -> {
-				"item": value,
-				"Total" : accumulateValues (
-			vars.accumulatorVar, 'intKeyNameDesign', (accVar) -> accVar + (value.workerAmount*value.workerType)
-			       )
-			    },
-	production: payload.production map (value,index) -> {
-				"item": value,
-				"Total" : accumulateValues (
-			vars.accumulatorVar, 'intKeyNameProduction', (accVar) -> accVar + (value.workerAmount*value.workerType)
-			       )
-			    }
-}
-
-
-//https://iwconnect.com/how-to-accumulate-and-modify-values-into-variable-using-mule-4-and-dataweave-2/]]></ee:set-payload>
+    sandbox: payload.sandbox default [],
+    totalAllocatedVcoresSandbox: allocatedVcores(payload.sandbox),
+    production: payload.production default [],
+    totalAllocatedVcoresProduction: allocatedVcores(payload.production),
+    design: payload.design default [],
+    totalAllocatedVcoresDesign: allocatedVcores(payload.design)
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<ee:transform doc:name="Transform Message" doc:id="f9a12265-231e-44b0-aab4-6cbabc684ae1">
+		<ee:transform doc:name="add totalVCores per environment" doc:id="f9a12265-231e-44b0-aab4-6cbabc684ae1">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -501,12 +466,12 @@ var prod_cores_normal_contract = Mule::p('customer.prod_cores_normal_contract')
 var sanbox_cores_normal_contract = Mule::p('customer.sandbox_cores_normal_contract')
 var design_cores_normal_contract = Mule::p('customer.design_cores_normal_contract')
 ---
-//this splits the array into left side and right side. The left side has the application using the normal contract, the right side has the microservices contract. 
-//The total number of cores in the normal contract is specified below for each type of environment.
 {
-	production: (payload.production default []) splitWhere ($.Total > prod_cores_normal_contract) ++ {totalVCoresProduction: vars.totalVCoresProd},
-	design: (payload.design default []) splitWhere ($.Total > design_cores_normal_contract)  ++ {totalVCoresDesign: vars.totalVCoresDesign},
-	sandbox: (payload.sandbox default []) splitWhere ($.Total > sanbox_cores_normal_contract)  ++ {totalVCoresSandBox: vars.totalVCoresSandbox}
+	production: {items: payload.production} ++ {totalVCoresProduction: vars.totalVCoresProd, totalAllocatedVcoresProduction: payload.totalAllocatedVcoresProduction},
+	design: {items: payload.design} ++ {totalVCoresDesign: vars.totalVCoresDesign, totalAllocatedVcoresDesign: payload.totalAllocatedVcoresDesign},
+	sandbox: {items: payload.sandbox} ++ {totalVCoresSandBox: vars.totalVCoresSandbox, totalAllocatedVcoresSandbox: payload.totalAllocatedVcoresSandbox},
+	startDate: vars.startDate,
+	endDate: vars.endDate
 }
 ]]></ee:set-payload>
 			</ee:message>
